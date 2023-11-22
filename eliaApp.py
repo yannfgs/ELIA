@@ -1,3 +1,5 @@
+# APLICAÇÃO ELITA - INTELIGÊNCIA ARTIFICIAL DA ELITE AÇO - API CHATGPT
+
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import requests
