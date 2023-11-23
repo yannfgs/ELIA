@@ -2,8 +2,9 @@ import tkinter as tk
 from tkinter import messagebox, scrolledtext
 import requests
 
-# Substitua pela sua chave de API real da OpenAI
-API_KEY = 'vgBwZU9MeRPukewGxEpiT3BlbkFJ3glWxR8VEEmHt7tDtKyX'
+# Substitua pela sua chave de API e Organization ID reais da OpenAI
+API_KEY = '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'
+ORGANIZATION_ID = 'org-4GGvTGan5YuCScHmLKDtIGt8'
 
 class EliaApp:
     def __init__(self, master):
@@ -29,29 +30,27 @@ class EliaApp:
         self.text_response.pack()
 
     def send_message(self):
-        prompt = self.text_message.get()
+        user_input = self.text_message.get()
         data = {
-            'model': 'gpt-3.5-turbo',  # Escolha o modelo adequado para o seu caso
+            'model': 'gpt-3.5-turbo',
             'messages': [
                 {"role": "system", "content": "Você é um assistente útil."},
-                {"role": "user", "content": prompt.strip()}
+                {"role": "user", "content": user_input}
             ]
         }
 
         headers = {
             'Authorization': f'Bearer {API_KEY}',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'OpenAI-Organization': ORGANIZATION_ID
         }
 
         try:
             response = requests.post('https://api.openai.com/v1/chat/completions', headers=headers, json=data)
-            response.raise_for_status()
+            response.raise_for_status()  # Isso vai gerar uma exceção se a requisição falhar
             response_data = response.json()
             self.text_response.delete(1.0, tk.END)
-            if 'choices' in response_data:
-                self.text_response.insert(tk.END, response_data['choices'][0]['message']['content'])
-            else:
-                self.text_response.insert(tk.END, "Erro na resposta da API.")
+            self.text_response.insert(tk.END, response_data['choices'][0]['message']['content'])
         except requests.exceptions.RequestException as e:
             messagebox.showerror("Erro", str(e))
 
