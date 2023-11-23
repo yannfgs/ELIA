@@ -1,15 +1,20 @@
 import tkinter as tk
-from tkinter import messagebox, scrolledtext
+from tkinter import messagebox, scrolledtext, PhotoImage
 import requests
 
 # Substitua pela sua chave de API e Organization ID reais da OpenAI
-API_KEY = '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'
+API_KEY = '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'
 ORGANIZATION_ID = 'org-4GGvTGan5YuCScHmLKDtIGt8'
 
 class EliaApp:
     def __init__(self, master):
         self.master = master
-        master.title("Aplicação ELIA - ChatGPT com OpenAI")
+        master.title("Aplicação ELIA - Inteligência Artificial da Elite Aço")
+
+        # Carregar e exibir a logo
+        self.logo_image = PhotoImage(file='img\logo_ELITEACO_150px.png')  # Substitua pelo caminho correto da sua logo
+        self.logo_label = tk.Label(master, image=self.logo_image)
+        self.logo_label.pack()
 
         # Label e entrada de texto para a mensagem do usuário
         self.label_message = tk.Label(master, text="Digite sua mensagem para o assistente:")
@@ -34,7 +39,7 @@ class EliaApp:
         data = {
             'model': 'gpt-3.5-turbo',
             'messages': [
-                {"role": "system", "content": "Você é um assistente útil."},
+                {"role": "system", "content": "Você é um assistente útil. Sempre responda na língua Portuguesa do Brasil"},
                 {"role": "user", "content": user_input}
             ]
         }
