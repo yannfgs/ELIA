@@ -3,11 +3,18 @@ from tkinter import messagebox, scrolledtext, PhotoImage, font
 import requests
 import threading
 import time
+import os
+import sys
 
 # Substitua pela sua chave de API e Organization ID reais da OpenAI
-API_KEY = "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"
+API_KEY = "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"
 ORGANIZATION_ID = "org-4GGvTGan5YuCScHmLKDtIGt8"
 
+# Função para obter o caminho correto dos recursos
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for development and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
 
 class EliaApp:
     def __init__(self, master):
@@ -18,7 +25,8 @@ class EliaApp:
         self.custom_font = font.Font(family="Poppins", size=10)
 
         # Carregar e exibir a logo
-        self.logo_image = PhotoImage(file="img\logo_ELITEACO_150px.png")
+        logo_path = resource_path("img/logo_ELITEACO_150px.png")
+        self.logo_image = PhotoImage(file=logo_path)
         self.logo_label = tk.Label(master, image=self.logo_image)
         self.logo_label.pack()
 
