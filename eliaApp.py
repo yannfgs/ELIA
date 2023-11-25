@@ -73,26 +73,50 @@ class EliaApp:
         self.text_message.pack(side="left", fill="x", expand=True)
         self.text_message.bind("<Return>", self.send_message)
 
+        # Placeholder para a área de entrada de texto
+        self.placeholder_text = "Escreva sua mensagem aqui"
+        self.text_message.insert("1.0", self.placeholder_text)
+        self.text_message.bind("<FocusIn>", self.clear_placeholder)
+        self.text_message.bind("<FocusOut>", self.add_placeholder)
+        self.text_message.config(fg='grey')
+
         # Botão para enviar a mensagem
         self.button_send = tk.Button(
             input_frame, text="Enviar", command=self.send_message, font=self.custom_font
         )
         self.button_send.pack(side="left", padx=10)
 
+    def clear_placeholder(self, event=None):
+        """Limpa o texto de placeholder quando a caixa de texto é focada."""
+        current_text = self.text_message.get("1.0", tk.END)
+        if current_text.strip() == self.placeholder_text:
+            self.text_message.delete("1.0", tk.END)
+            self.text_message.config(fg='black')
+
+    def add_placeholder(self, event=None):
+        """Adiciona o texto de placeholder se a caixa de texto estiver vazia quando desfocada."""
+        if not self.text_message.get("1.0", tk.END).strip():
+            self.text_message.insert("1.0", self.placeholder_text)
+            self.text_message.config(fg='grey')
+
     def send_message(self, event=None):
         user_input = self.text_message.get("1.0", tk.END).strip()
-        if not user_input:  # Evita enviar mensagens vazias
-            return
-        self.text_message.delete("1.0", tk.END)  # Limpa o campo de entrada após enviar
-        self.append_to_chat(user_input, "Você")  # Removido a duplicação no texto
-        self.initiate_waiting_animation()
-        threading.Thread(
-            target=self.query_openai_api, args=(user_input,), daemon=True
-        ).start()
-        self.text_message.focus_set()  # Foca na área de texto de entrada
-        self.text_message.mark_set(
-            tk.INSERT, "1.0"
-        )  # Define a posição do cursor no início
+        if user_input and not user_input.isspace():  # Verifica se a entrada não é apenas espaço em branco
+            self.append_to_chat(user_input, "Você")  # Adiciona a mensagem do usuário ao histórico
+            self.initiate_waiting_animation()
+            threading.Thread(
+                target=self.query_openai_api, args=(user_input,), daemon=True
+            ).start()
+
+            self.text_message.delete("1.0", tk.END)  # Limpa o campo de entrada após enviar
+            self.text_message.insert("1.0", "")  # Insere uma string vazia para manter o cursor na primeira linha
+            self.text_message.mark_set(tk.INSERT, "1.0")  # Reposiciona o cursor na primeira linha
+            self.text_message.see(tk.INSERT)  # Garante que a visão esteja focada no cursor
+            self.text_message.focus_set()  # Foca na área de texto de entrada
+
+        # Se a função foi chamada por um evento de tecla, impede a inserção de nova linha
+        if event:
+            return "break"
 
     def append_to_chat(self, message, sender):
         self.text_response.config(state="normal")
@@ -131,7 +155,7 @@ class EliaApp:
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a helpful assistant. Always answer in Portuguese (Brazil) language.",
+                    "content": "Você é um assistente útil. Sempre responda em Português do Brasil",
                 },
                 {"role": "user", "content": user_input},
             ],
