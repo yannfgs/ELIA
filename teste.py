@@ -1,8 +1,15 @@
 import sys
 import requests
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QLabel, QVBoxLayout, QHBoxLayout,
-    QPushButton, QTextEdit, QLineEdit, QWidget
+    QApplication,
+    QMainWindow,
+    QLabel,
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QTextEdit,
+    QLineEdit,
+    QWidget,
 )
 from PyQt6.QtGui import QTextCursor, QTextCharFormat, QFont
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QSize
@@ -10,6 +17,7 @@ from PyQt6.QtCore import Qt, QThread, pyqtSignal, QSize
 # Substitua pela sua chave de API e Organization ID reais da OpenAI
 API_KEY = "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"
 ORGANIZATION_ID = "org-4GGvTGan5YuCScHmLKDtIGt8"
+
 
 class Worker(QThread):
     finished = pyqtSignal(str)
@@ -28,25 +36,30 @@ class Worker(QThread):
     def query_openai_api(self, user_input):
         data = {
             "model": "gpt-3.5-turbo",
-            "messages": [{"role": "user", "content": user_input}]
+            "messages": [{"role": "user", "content": user_input}],
         }
 
         headers = {
             "Authorization": f"Bearer {API_KEY}",
             "Content-Type": "application/json",
-            "OpenAI-Organization": ORGANIZATION_ID
+            "OpenAI-Organization": ORGANIZATION_ID,
         }
 
-        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=data)
+        response = requests.post(
+            "https://api.openai.com/v1/chat/completions", headers=headers, json=data
+        )
         response.raise_for_status()
         response_data = response.json()
         return response_data["choices"][0]["message"]["content"]
+
 
 class EliaApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Aplicação ELIA - Inteligência Artificial da Elite Aço")
-        self.setWindowIcon(QIcon("img/icon_usuario.png"))  # Insert the path to your app icon
+        self.setWindowIcon(
+            QIcon("img/icon_usuario.png")
+        )  # Insert the path to your app icon
 
         self.init_ui()
         self.showMaximized()
@@ -56,19 +69,27 @@ class EliaApp(QMainWindow):
 
         # Logo setup
         self.logo = QLabel()
-        self.logo_pixmap = QPixmap("img/logo_ELITEACO_500px.png")  # Insert the path to your logo image
-        self.logo.setPixmap(self.logo_pixmap.scaled(QSize(400, 100), Qt.AspectRatioMode.KeepAspectRatio))
+        self.logo_pixmap = QPixmap(
+            "img/logo_ELITEACO_500px.png"
+        )  # Insert the path to your logo image
+        self.logo.setPixmap(
+            self.logo_pixmap.scaled(QSize(400, 100), Qt.AspectRatioMode.KeepAspectRatio)
+        )
         self.layout.addWidget(self.logo, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Text area for conversation history
         self.chat_history = QTextEdit()
         self.chat_history.setReadOnly(True)
-        self.chat_history.setStyleSheet("QTextEdit { padding: 10px; }")  # Add internal padding
+        self.chat_history.setStyleSheet(
+            "QTextEdit { padding: 10px; }"
+        )  # Add internal padding
         self.layout.addWidget(self.chat_history)
 
         # Input area setup
         self.input_area = QLineEdit()
-        self.input_area.returnPressed.connect(self.send_message)  # Envia a mensagem ao pressionar Enter
+        self.input_area.returnPressed.connect(
+            self.send_message
+        )  # Envia a mensagem ao pressionar Enter
         self.layout.addWidget(self.input_area)
         self.send_button = QPushButton("Enviar")
         self.layout.addWidget(self.send_button)
@@ -101,25 +122,27 @@ class EliaApp(QMainWindow):
         if sender == "Assistente":
             self.processing_label.clear()  # Clear processing text when we receive the response
         self.chat_history.moveCursor(QTextCursor.MoveOperation.End)
-        
+
         # Apply bold format to sender's name
         char_format = QTextCharFormat()
         char_format.setFontWeight(QFont.Weight.Bold)
         self.chat_history.setCurrentCharFormat(char_format)
         self.chat_history.insertPlainText(f"{sender}:\n")
-        
+
         # Apply normal format to message
         char_format.setFontWeight(QFont.Weight.Normal)
         self.chat_history.setCurrentCharFormat(char_format)
         self.chat_history.insertPlainText(f"{message}\n\n")
-        
+
         self.chat_history.ensureCursorVisible()
+
 
 # Run the app
 def main():
     app = QApplication(sys.argv)
     elia_app = EliaApp()
     sys.exit(app.exec())
+
 
 if __name__ == "__main__":
     main()
