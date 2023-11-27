@@ -36,9 +36,7 @@ class EliaApp:
 
         # Carregar ícones para o usuário e o assistente
         self.user_icon = PhotoImage(file=resource_path("img\icon_usuario.png"))
-        self.assistant_icon = PhotoImage(
-            file=resource_path("img\icon_assistente.png")
-        )
+        self.assistant_icon = PhotoImage(file=resource_path("img\icon_assistente.png"))
 
         # Configurar o layout da aplicação
         self.setup_layout(master)
@@ -58,9 +56,14 @@ class EliaApp:
 
         # Área de texto com barra de rolagem para a resposta
         self.text_response = scrolledtext.ScrolledText(
-            response_frame, wrap=tk.WORD, font=self.custom_font, state='disabled', padx=10, pady=10
+            response_frame,
+            wrap=tk.WORD,
+            font=self.custom_font,
+            state="disabled",
+            padx=10,
+            pady=10,
         )
-        self.text_response.pack(expand=True, fill='both')
+        self.text_response.pack(expand=True, fill="both")
 
         # Frame para área de entrada
         input_frame = tk.Frame(master)
@@ -78,7 +81,7 @@ class EliaApp:
         self.text_message.insert("1.0", self.placeholder_text)
         self.text_message.bind("<FocusIn>", self.clear_placeholder)
         self.text_message.bind("<FocusOut>", self.add_placeholder)
-        self.text_message.config(fg='grey')
+        self.text_message.config(fg="grey")
 
         # Botão para enviar a mensagem
         self.button_send = tk.Button(
@@ -91,27 +94,39 @@ class EliaApp:
         current_text = self.text_message.get("1.0", tk.END)
         if current_text.strip() == self.placeholder_text:
             self.text_message.delete("1.0", tk.END)
-            self.text_message.config(fg='black')
+            self.text_message.config(fg="black")
 
     def add_placeholder(self, event=None):
         """Adiciona o texto de placeholder se a caixa de texto estiver vazia quando desfocada."""
         if not self.text_message.get("1.0", tk.END).strip():
             self.text_message.insert("1.0", self.placeholder_text)
-            self.text_message.config(fg='grey')
+            self.text_message.config(fg="grey")
 
     def send_message(self, event=None):
         user_input = self.text_message.get("1.0", tk.END).strip()
-        if user_input and not user_input.isspace():  # Verifica se a entrada não é apenas espaço em branco
-            self.append_to_chat(user_input, "Você")  # Adiciona a mensagem do usuário ao histórico
+        if (
+            user_input and not user_input.isspace()
+        ):  # Verifica se a entrada não é apenas espaço em branco
+            self.append_to_chat(
+                user_input, "Você"
+            )  # Adiciona a mensagem do usuário ao histórico
             self.initiate_waiting_animation()
             threading.Thread(
                 target=self.query_openai_api, args=(user_input,), daemon=True
             ).start()
 
-            self.text_message.delete("1.0", tk.END)  # Limpa o campo de entrada após enviar
-            self.text_message.insert("1.0", "")  # Insere uma string vazia para manter o cursor na primeira linha
-            self.text_message.mark_set(tk.INSERT, "1.0")  # Reposiciona o cursor na primeira linha
-            self.text_message.see(tk.INSERT)  # Garante que a visão esteja focada no cursor
+            self.text_message.delete(
+                "1.0", tk.END
+            )  # Limpa o campo de entrada após enviar
+            self.text_message.insert(
+                "1.0", ""
+            )  # Insere uma string vazia para manter o cursor na primeira linha
+            self.text_message.mark_set(
+                tk.INSERT, "1.0"
+            )  # Reposiciona o cursor na primeira linha
+            self.text_message.see(
+                tk.INSERT
+            )  # Garante que a visão esteja focada no cursor
             self.text_message.focus_set()  # Foca na área de texto de entrada
 
         # Se a função foi chamada por um evento de tecla, impede a inserção de nova linha
