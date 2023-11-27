@@ -1,8 +1,15 @@
 import sys
 import requests
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QPushButton, QTextEdit, QLineEdit
+    QApplication,
+    QMainWindow,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QTextEdit,
+    QLineEdit,
 )
 from PyQt6.QtGui import QPixmap, QIcon, QFont
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QSize
@@ -52,7 +59,9 @@ class EliaApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Aplicação ELIA - Inteligência Artificial da Elite Aço")
-        self.setWindowIcon(QIcon("icon_path_here"))  # Substitua pelo caminho do ícone da sua aplicação
+        self.setWindowIcon(
+            QIcon("icon_path_here")
+        )  # Substitua pelo caminho do ícone da sua aplicação
 
         # Setup the UI
         self.central_widget = QWidget()
@@ -67,7 +76,9 @@ class EliaApp(QMainWindow):
     def setup_ui(self):
         # Logo
         self.logo_label = QLabel()
-        self.logo_pixmap = QPixmap("logo_path_here")  # Substitua pelo caminho da imagem da sua logo
+        self.logo_pixmap = QPixmap(
+            "logo_path_here"
+        )  # Substitua pelo caminho da imagem da sua logo
         self.logo_label.setPixmap(self.logo_pixmap)
         self.layout.addWidget(self.logo_label)
 
