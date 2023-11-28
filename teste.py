@@ -68,6 +68,10 @@ class EliaApp(QMainWindow):
 
         self.init_ui()
         self.showMaximized()
+        
+        # Carregar ícones
+        self.user_icon = QPixmap("img/icon_usuario.png")
+        self.assistant_icon = QPixmap("img/icon_assistente.png")
 
     def init_ui(self):
         self.layout = QVBoxLayout()
@@ -116,7 +120,7 @@ class EliaApp(QMainWindow):
             self.input_area.clear()
             self.processing_label.setText("Processando...")
             self.worker = Worker(user_message)
-            self.worker.finished.connect(self.handle_response)
+            self.worker.finished.connect(self.handle_response)  # Conexão correta
             self.worker.start()
 
     def handle_response(self, message):
@@ -124,21 +128,10 @@ class EliaApp(QMainWindow):
         self.append_message_to_chat("Assistente", message)
 
     def append_message_to_chat(self, sender, message):
-        if sender == "Assistente":
-            self.processing_label.clear()  # Clear processing text when we receive the response
         self.chat_history.moveCursor(QTextCursor.MoveOperation.End)
-
-        # Apply bold format to sender's name
-        char_format = QTextCharFormat()
-        char_format.setFontWeight(QFont.Weight.Bold)
-        self.chat_history.setCurrentCharFormat(char_format)
-        self.chat_history.insertPlainText(f"{sender}:\n")
-
-        # Apply normal format to message
-        char_format.setFontWeight(QFont.Weight.Normal)
-        self.chat_history.setCurrentCharFormat(char_format)
+        icon_path = "img/icon_usuario.png" if sender == "Você" else "img/icon_assistente.png"
+        self.chat_history.insertHtml(f"<img src='{icon_path}' width='15' height='15'> <b>{sender}:</b><br>")
         self.chat_history.insertPlainText(f"{message}\n\n")
-
         self.chat_history.ensureCursorVisible()
 
 
