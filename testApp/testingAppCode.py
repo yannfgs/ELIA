@@ -104,8 +104,11 @@ class EliaApp(QMainWindow):
         self.chat_history.setFont(QFont("Arial", 12))
 
         # Mensagem de boas-vindas
-        self.append_message_to_chat("Assistente", "Olá, bem-vindo(a) ao atendimento da Elite Aço! Como posso ajudar?")
-        
+        self.append_message_to_chat(
+            "Assistente",
+            "Olá, bem-vindo(a) ao atendimento da Elite Aço! Como posso ajudar?",
+        )
+
         # Input area setup
         self.input_area = QLineEdit()
         self.input_area.returnPressed.connect(
@@ -124,10 +127,10 @@ class EliaApp(QMainWindow):
         container = QWidget()
         container.setLayout(self.layout)
         self.setCentralWidget(container)
-        
-# Defina o tamanho inicial da janela para ser menor que o máximo
+
+        # Defina o tamanho inicial da janela para ser menor que o máximo
         self.setGeometry(300, 300, 800, 600)  # Ajuste as dimensões conforme necessário
-        
+
     def send_message(self):
         user_message = self.input_area.text()
         if user_message:
