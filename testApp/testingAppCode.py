@@ -20,7 +20,7 @@ from PyQt6.QtGui import (
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QSize
 
 # Substitua pela sua chave de API e Organization ID reais da OpenAI
-API_KEY = "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"
+API_KEY = "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"
 ORGANIZATION_ID = "org-4GGvTGan5YuCScHmLKDtIGt8"
 
 
@@ -41,7 +41,13 @@ class Worker(QThread):
     def query_openai_api(self, user_input):
         data = {
             "model": "gpt-3.5-turbo",
-            "messages": [{"role": "user", "content": user_input}],
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "Você é um assistente útil. Responda sempre em Português (Brasil).",
+                },
+                {"role": "user", "content": user_input},
+            ],
         }
 
         headers = {
@@ -68,7 +74,7 @@ class EliaApp(QMainWindow):
 
         self.init_ui()
         self.showMaximized()
-        
+
         # Carregar ícones
         self.user_icon = QPixmap("img/icon_usuario.png")
         self.assistant_icon = QPixmap("img/icon_assistente.png")
@@ -129,8 +135,12 @@ class EliaApp(QMainWindow):
 
     def append_message_to_chat(self, sender, message):
         self.chat_history.moveCursor(QTextCursor.MoveOperation.End)
-        icon_path = "img/icon_usuario.png" if sender == "Você" else "img/icon_assistente.png"
-        self.chat_history.insertHtml(f"<img src='{icon_path}' width='15' height='15'> <b>{sender}:</b><br>")
+        icon_path = (
+            "img/icon_usuario.png" if sender == "Você" else "img/icon_assistente.png"
+        )
+        self.chat_history.insertHtml(
+            f"<img src='{icon_path}' width='15' height='15'> <b>{sender}:</b><br>"
+        )
         self.chat_history.insertPlainText(f"{message}\n\n")
         self.chat_history.ensureCursorVisible()
 

@@ -20,7 +20,7 @@ from PyQt6.QtGui import (
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QSize
 
 # Substitua pela sua chave de API e Organization ID reais da OpenAI
-API_KEY = "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"
+API_KEY = "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"
 ORGANIZATION_ID = "org-4GGvTGan5YuCScHmLKDtIGt8"
 
 
