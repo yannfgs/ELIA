@@ -166,29 +166,19 @@ class EliaApp(QMainWindow):
             self.append_message_to_chat("Você", user_message)
             self.input_area.clear()
             self.processing_label.movie().start()
-            self.processing_label.setText("Processando...")
-            self.worker = Worker(user_message)
-            self.worker.finished.connect(self.handle_response)  # Conexão correta
-            self.worker.start()
-            self.loading_movie.start()
-            # Iniciar um novo Worker a cada mensagem enviada
-            self.start_worker(user_message)
-            
+            self.start_worker(user_message)  # Chame start_worker apenas uma vez
+
     def start_worker(self, user_input):
-        if self.current_worker is not None:
-            # Desconecta o sinal finished do worker anterior (se houver)
-            self.current_worker.finished.disconnect()
-            self.current_worker = Worker(user_input)
-            self.current_worker.finished.connect(self.handle_response)
-            self.current_worker.start()
+        # Você deve sempre criar um novo Worker, independentemente de haver um Worker anterior ou não
+        self.current_worker = Worker(user_input)
+        self.current_worker.finished.connect(self.handle_response)
+        self.current_worker.start()
 
     def handle_response(self, message):
-        # Parar o GIF de carregamento e limpar a label uma única vez
         self.loading_movie.stop()
         self.processing_label.clear()
         self.append_message_to_chat("Assistente", message)
-        # Importante: desvincular o slot do sinal depois de processar a resposta para evitar chamadas múltiplas
-        self.current_worker.finished.disconnect()
+        self.current_worker.finished.disconnect()  # Desconecte o sinal após a resposta ser recebida
 
     def append_message_to_chat(self, sender, message):
         self.chat_history.moveCursor(QTextCursor.MoveOperation.End)
