@@ -7,7 +7,7 @@ import os
 import sys
 
 # Substitua pela sua chave de API e Organization ID reais da OpenAI
-API_KEY = "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"
+API_KEY = "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"
 ORGANIZATION_ID = "org-4GGvTGan5YuCScHmLKDtIGt8"
 
 
