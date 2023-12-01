@@ -1,16 +1,26 @@
 import sys
 import requests
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QLabel, QVBoxLayout, QPushButton,
-    QTextEdit, QLineEdit, QWidget, QHBoxLayout
+    QApplication,
+    QMainWindow,
+    QLabel,
+    QVBoxLayout,
+    QPushButton,
+    QTextEdit,
+    QLineEdit,
+    QWidget,
 )
 from PyQt6.QtGui import (
-    QFont, QPixmap, QIcon, QMovie, QTextCursor  # Aqui foi adicionado QTextCursor
+    QTextCursor,
+    QTextCharFormat,
+    QFont,
+    QPixmap,
+    QIcon,  # Importação correta adicionada aqui
 )
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QSize
 
 # Substitua pela sua chave de API e Organization ID reais da OpenAI
-API_KEY = "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"
+API_KEY = "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"
 ORGANIZATION_ID = "org-4GGvTGan5YuCScHmLKDtIGt8"
 
 
@@ -58,21 +68,19 @@ class EliaApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Aplicação ELIA - Inteligência Artificial da Elite Aço")
-        self.setWindowIcon(QIcon("img/icon_usuario.png"))  # Verifique o caminho do ícone
+        self.setWindowIcon(QIcon("img/icon_usuario.png")) 
 
-        # Inicializar os atributos que serão usados em outros métodos
         self.chat_history = QTextEdit()
         self.processing_label = QLabel()
         self.input_area = QLineEdit()
         self.send_button = QPushButton("Enviar")
-        self.current_worker = None  # Inicializa um atributo para armazenar o worker atual
+        self.current_worker = None
 
-        # Carregar ícones
-        self.user_icon = QPixmap("img/icon_usuario.png")  # Verifique o caminho do ícone
-        self.assistant_icon = QPixmap("img/icon_assistente.png")  # Verifique o caminho do ícone
+        # Garantindo que self.layout é um QVBoxLayout antes de prosseguir.
+        self.layout = QVBoxLayout()  # Aqui é onde definimos self.layout como um layout.
 
         self.init_ui()
-
+        
         # Define o tamanho e posição iniciais da janela
         self.setGeometry(300, 300, 800, 600)
 
@@ -95,7 +103,7 @@ class EliaApp(QMainWindow):
                 background-color: #0078D7;
                 color: white;
                 padding: 10px;
-                border-radius: 5px;
+                border-radius: 10px;
                 margin: 5px;
             }
             QPushButton:hover {
@@ -104,27 +112,36 @@ class EliaApp(QMainWindow):
             QLineEdit {
                 padding: 10px;
                 border: 1px solid #D3D3D3;
-                border-radius: 5px;
+                border-radius: 10px;
             }
         """)
-        
+
         # Configuração do layout principal
         self.layout = QVBoxLayout()
 
         # Configuração da logo
         self.logo = QLabel()
-        self.logo_pixmap = QPixmap("img/logo_ELITEACO_500px.png")  # Verifique o caminho da imagem
-        self.logo.setPixmap(self.logo_pixmap.scaled(QSize(400, 100), Qt.AspectRatioMode.KeepAspectRatio))
+        self.logo_pixmap = QPixmap(
+            "img/logo_ELITEACO_500px.png"
+        )  # Verifique o caminho da imagem
+        self.logo.setPixmap(
+            self.logo_pixmap.scaled(QSize(400, 100), Qt.AspectRatioMode.KeepAspectRatio)
+        )
         self.layout.addWidget(self.logo, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Configuração da área de histórico de conversas
         self.chat_history.setReadOnly(True)
-        self.chat_history.setStyleSheet("QTextEdit { padding: 10px; }")  # Adicionar padding interno
+        self.chat_history.setStyleSheet(
+            "QTextEdit { padding: 10px; }"
+        )  # Adicionar padding interno
         self.chat_history.setFont(QFont("Arial", 12))  # Configurar o tamanho da fonte
         self.layout.addWidget(self.chat_history)
 
         # Mensagem de boas-vindas
-        self.append_message_to_chat("Assistente", "Olá, bem-vindo(a) ao atendimento da Elite Aço! Como posso ajudar?")
+        self.append_message_to_chat(
+            "Assistente",
+            "Olá, me chamo ELIA! Sou a IA da Elite Aço. Seja bem-vindo(a)! Como posso ajudar?",
+        )
 
         # Configuração da área de entrada de texto
         self.input_area.returnPressed.connect(self.send_message)
@@ -142,43 +159,22 @@ class EliaApp(QMainWindow):
         container.setLayout(self.layout)
         self.setCentralWidget(container)
         
-        # Definição de layout para área de entrada e botão de envio
-        input_layout = QHBoxLayout()
-        self.input_area.returnPressed.connect(self.send_message)
-        input_layout.addWidget(self.input_area)
-        self.send_button.clicked.connect(self.send_message)
-        input_layout.addWidget(self.send_button)
-
-        # Integração do novo layout na interface
-        self.layout.addLayout(input_layout)
-
-        # Adicione o layout de entrada ao layout principal
-        self.layout.addLayout(input_layout)
-
-        # GIF de carregamento para feedback visual durante a chamada da API
-        self.loading_movie = QMovie("path/to/loading.gif")
-        self.processing_label.setMovie(self.loading_movie)
-        self.layout.addWidget(self.processing_label)
+        # Adicione esta linha no final do método init_ui
+        self.input_area.setFocus()
 
     def send_message(self):
         user_message = self.input_area.text()
         if user_message:
             self.append_message_to_chat("Você", user_message)
             self.input_area.clear()
-            self.processing_label.movie().start()
-            self.start_worker(user_message)  # Chame start_worker apenas uma vez
-
-    def start_worker(self, user_input):
-        # Você deve sempre criar um novo Worker, independentemente de haver um Worker anterior ou não
-        self.current_worker = Worker(user_input)
-        self.current_worker.finished.connect(self.handle_response)
-        self.current_worker.start()
+            self.processing_label.setText("Processando...")
+            self.worker = Worker(user_message)
+            self.worker.finished.connect(self.handle_response)  # Conexão correta
+            self.worker.start()
 
     def handle_response(self, message):
-        self.loading_movie.stop()
         self.processing_label.clear()
         self.append_message_to_chat("Assistente", message)
-        self.current_worker.finished.disconnect()  # Desconecte o sinal após a resposta ser recebida
 
     def append_message_to_chat(self, sender, message):
         self.chat_history.moveCursor(QTextCursor.MoveOperation.End)
@@ -190,7 +186,6 @@ class EliaApp(QMainWindow):
         )
         self.chat_history.insertPlainText(f"{message}\n\n")
         self.chat_history.ensureCursorVisible()
-
 
 # Rodar a aplicação
 def main():

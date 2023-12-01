@@ -68,9 +68,7 @@ class EliaApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Aplicação ELIA - Inteligência Artificial da Elite Aço")
-        self.setWindowIcon(
-            QIcon("img/icon_usuario.png")
-        )  # Verifique o caminho do ícone
+        self.setWindowIcon(QIcon("img/icon_usuario.png"))  # Verifique o caminho do ícone
 
         # Inicializar os atributos que serão usados em outros métodos
         self.chat_history = QTextEdit()
@@ -80,9 +78,7 @@ class EliaApp(QMainWindow):
 
         # Carregar ícones
         self.user_icon = QPixmap("img/icon_usuario.png")  # Verifique o caminho do ícone
-        self.assistant_icon = QPixmap(
-            "img/icon_assistente.png"
-        )  # Verifique o caminho do ícone
+        self.assistant_icon = QPixmap("img/icon_assistente.png")  # Verifique o caminho do ícone
 
         self.init_ui()
 
@@ -95,27 +91,18 @@ class EliaApp(QMainWindow):
 
         # Configuração da logo
         self.logo = QLabel()
-        self.logo_pixmap = QPixmap(
-            "img/logo_ELITEACO_500px.png"
-        )  # Verifique o caminho da imagem
-        self.logo.setPixmap(
-            self.logo_pixmap.scaled(QSize(400, 100), Qt.AspectRatioMode.KeepAspectRatio)
-        )
+        self.logo_pixmap = QPixmap("img/logo_ELITEACO_500px.png")  # Verifique o caminho da imagem
+        self.logo.setPixmap(self.logo_pixmap.scaled(QSize(400, 100), Qt.AspectRatioMode.KeepAspectRatio))
         self.layout.addWidget(self.logo, alignment=Qt.AlignmentFlag.AlignCenter)
 
         # Configuração da área de histórico de conversas
         self.chat_history.setReadOnly(True)
-        self.chat_history.setStyleSheet(
-            "QTextEdit { padding: 10px; }"
-        )  # Adicionar padding interno
+        self.chat_history.setStyleSheet("QTextEdit { padding: 10px; }")  # Adicionar padding interno
         self.chat_history.setFont(QFont("Arial", 12))  # Configurar o tamanho da fonte
         self.layout.addWidget(self.chat_history)
 
         # Mensagem de boas-vindas
-        self.append_message_to_chat(
-            "Assistente",
-            "Olá, bem-vindo(a) ao atendimento da Elite Aço! Como posso ajudar?",
-        )
+        self.append_message_to_chat("Assistente", "Olá, bem-vindo(a) ao atendimento da Elite Aço! Como posso ajudar?")
 
         # Configuração da área de entrada de texto
         self.input_area.returnPressed.connect(self.send_message)
