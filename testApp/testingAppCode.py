@@ -181,10 +181,17 @@ class EliaApp(QMainWindow):
         icon_path = (
             "img/icon_usuario.png" if sender == "Você" else "img/icon_assistente.png"
         )
-        self.chat_history.insertHtml(
-            f"<img src='{icon_path}' width='15' height='15'> <b>{sender}:</b><br>"
-        )
-        self.chat_history.insertPlainText(f"{message}\n\n")
+
+        # Usar HTML para formatar a mensagem com alinhamento à esquerda
+        message_html = f"""
+        <div style='text-align: left;'>
+            <img src='{icon_path}' width='15' height='15' style='vertical-align: middle;'>
+            <b>{sender}:</b>
+        </div>
+        <p style='text-align: left; margin-left: 20px;'>{message}</p><br>
+        """
+
+        self.chat_history.insertHtml(message_html)
         self.chat_history.ensureCursorVisible()
 
 # Rodar a aplicação
